@@ -14,11 +14,7 @@ from zanhu.utils.helper import ajax_required, AuthorRequireMixin
 class NewsListView(LoginRequiredMixin, ListView):
     """首页动态"""
     model = News
-    queryset = News.objects.all()
     paginate_by = 20  # 分页：url中的?page=
-    page_kwarg = 'p'
-    ordering = 'created_at'  # ("x", "y")
-    context_object_name = "news_list"  # queryset查询集在模板中的名字(默认: 模型类名_list / object_list)
     template_name = "news/news_list.html"  # 默认: '模型类名_list.html'
 
     def get_ordering(self):
@@ -26,7 +22,7 @@ class NewsListView(LoginRequiredMixin, ListView):
         自定义复杂的排序
         :return:
         """
-        ...
+        pass
 
     def get_paginate_by(self, queryset):
         """
@@ -34,14 +30,14 @@ class NewsListView(LoginRequiredMixin, ListView):
         :param queryset: 要排序的查询集对象
         :return:
         """
-        ...
+        pass
 
     def get_queryset(self):
         """
         获取视图的对象列表, 实现动态过滤
         :return: django查询集
         """
-        return News.objects.filter(reply=False)
+        return News.objects.filter(reply=False).select_related('user', 'parent').prefetch_related('liked')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         """
@@ -53,7 +49,7 @@ class NewsListView(LoginRequiredMixin, ListView):
         # context = super().get_context_data()
         # context["views"] = 100
         # return context
-        ...
+        pass
 
 
 class NewsDeleteView(LoginRequiredMixin, AuthorRequireMixin, DeleteView):

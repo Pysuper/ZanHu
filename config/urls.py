@@ -10,7 +10,7 @@ from zanhu.news.views import NewsListView
 
 urlpatterns = [
                   # 站点管理
-                  path(settings.ADMIN_URL, admin.site.urls),
+                  # path(settings.ADMIN_URL, admin.site.urls),
 
                   # 用户管理
                   path("users/", include("users.urls", namespace="users")),
