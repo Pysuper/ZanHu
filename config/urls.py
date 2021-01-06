@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
@@ -9,13 +10,13 @@ from zanhu.news.views import NewsListView
 
 urlpatterns = [
                   # 站点管理
-                  # path(settings.ADMIN_URL, admin.site.urls),
+                  path(settings.ADMIN_URL, admin.site.urls),
 
                   # 用户管理
                   path("users/", include("users.urls", namespace="users")),
 
                   # 开发的应用
-                  path("news/", include("news.urls", namespace="new")),
+                  path("news/", include("news.urls", namespace="news")),
 
                   # 配置首页
                   path("", NewsListView.as_view(), name="home"),

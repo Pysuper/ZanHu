@@ -19,10 +19,10 @@ def ajax_required(func):
 class AuthorRequireMixin(View):
     """验证是否为原作者，用于状态删除、文章编辑"""
 
-    def dispatch(self, request, *args, kwargs):
+    def dispatch(self, request, *args, **kwargs):
         # 状态和文章实例有user属性
-        if self.get_object().user.username != self.request.user.user:
-            raise PermissionDenied
-        return super().dispatch(request, *args, kwargs)
+        if self.get_object().user.username != self.request.user.username:
+            raise PermissionDenied  # 请求不允许
+        return super().dispatch(request, *args, **kwargs)
 
 

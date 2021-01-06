@@ -33,7 +33,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Django自己的APP
 DJANGO_APPS = [
-    # "simpleui",   # 配置后台站点
+    "simpleui",  # 配置后台站点
+    'django.contrib.admin',
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -50,9 +51,9 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",  # github登录
-    "allauth.socialaccount.providers.weibo",  # weibo登录
-    "allauth.socialaccount.providers.weixin",  # weixin登录
-    "allauth.socialaccount.providers.baidu",  # baidu登录
+    # "allauth.socialaccount.providers.weibo",  # weibo登录
+    # "allauth.socialaccount.providers.weixin",  # weixin登录
+    # "allauth.socialaccount.providers.baidu",  # baidu登录
     # "django_celery_beat",
     "rest_framework",
     # "rest_framework.authtoken",
@@ -76,9 +77,9 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
+
 AUTH_USER_MODEL = "users.User"
-# LOGIN_REDIRECT_URL = "users:redirect"
-LOGIN_REDIRECT_URL = "account_logout"
+LOGIN_REDIRECT_URL = "news:list"
 LOGIN_URL = "account_login"
 
 # 加密算法
@@ -104,7 +105,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
@@ -165,7 +166,7 @@ EMAIL_BACKEND = env("DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.s
 EMAIL_HOST = env("DJANGO_EMAIL_HOST")
 EMAIL_USE_SSL = env("DJANGO_EMAIL_USE_SSL", default=True)
 EMAIL_PORT = env("DJANGO_EMAIL_PORT", default=465)
-EMAIL_HOIST_USER = env("DJANGO_EMAIL_HOST_USER")
+EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL")
 EMAIL_TIMEOUT = 5
@@ -215,30 +216,32 @@ if USE_TZ:
     CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
-CELERY_ACCEPT_CONTENT = ["json", "msgpack"] # msgpack-> celery序列化和反序列化的数据格式
+CELERY_ACCEPT_CONTENT = ["json", "msgpack"]  # msgpack-> celery序列化和反序列化的数据格式
 CELERY_TASK_SERIALIZER = "msgpack"  # 序列化和反序列化的数据格式，二进制的json序列化方案
 CELERY_RESULT_SERIALIZER = "json"  # 读取任务结果，一般性能不高，所以使用可读性更好的json
 CELERY_TASK_TIME_LIMIT = 5 * 60  # 单个任务最大运行时间
 CELERY_TASK_SOFT_TIME_LIMIT = 60  # 任务的软时间限制，超时后SoftTimeLimitExceeded异常会被抛出
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+# CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-# 第三方登录认证
+# django-allauth
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)  # 是否允许用户注册
 ACCOUNT_AUTHENTICATION_METHOD = "username"  # 用户使用什么登录, email/user_email
-ACCOUNT_EMAIL_REQUIRED = False  # 是否要求用户输入邮箱信息
-ACCOUNT_EMAIL_VERIFICATION = "none"  # 是否验证邮件, none-不验证, mandatory-强制验证, optional-可选项
+ACCOUNT_EMAIL_REQUIRED = True  # 是否要求用户输入邮箱信息
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # 是否验证邮件, none-不验证, mandatory-强制验证, optional-可选项
 ACCOUNT_ADAPTER = "zanhu.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "zanhu.users.adapters.SocialAccountAdapter"
 
 # django-compressor
 INSTALLED_APPS += ["compressor"]
 STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-}
+
+# rest-framework
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "rest_framework.authentication.SessionAuthentication",
+#         "rest_framework.authentication.TokenAuthentication",
+#     ),
+#     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+# }
 
 CORS_URLS_REGEX = r"^/api/.*$"
