@@ -30,9 +30,9 @@ class News(models.Model):
 
     def switch_like(self, user):
         """点赞/取消点赞, 这里的动作是由某一个用户去执行的"""
-        if user in self.liked.all():    # self.liked.all()==> 所有赞过的用户
+        if user in self.liked.all():    # self.liked.all()==> 所有赞过的用户，self.liked==>多对多外键字段
             # 如果用户已经赞过，则取消赞
-            self.liked.remover(user)
+            self.liked.remove(user)
         else:
             # 如果用户没有赞过，则添加赞
             self.liked.add(user)

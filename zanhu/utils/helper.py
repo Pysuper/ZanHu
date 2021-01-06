@@ -16,7 +16,7 @@ def ajax_required(func):
     return wrap
 
 
-class AuthorRequireMixin(View):
+class AuthorRequiredMixin(View):
     """验证是否为原作者，用于状态删除、文章编辑"""
 
     def dispatch(self, request, *args, **kwargs):
