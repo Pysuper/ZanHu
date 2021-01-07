@@ -93,7 +93,7 @@ def like(request):
 
 @login_required
 @ajax_required
-@require_http_methods(["POST"])
+@require_http_methods(["GET"])
 def get_thread(request):
     """返回动态的评论，AJAX GET请求"""
     news_id = request.GET['news']
@@ -119,11 +119,19 @@ def post_comment(request):
     """评论, Ajax POST请求"""
     post = request.POST["reply"].strip()
     parent_id = request.POST["parent"]
-
-    print(post, parent_id)
     parent = News.objects.get(pk=parent_id)
     if post:
         parent.reply_this(request.user, post)
         return JsonResponse({"comments": parent.comment_count()})
     else:
         return HttpResponseBadRequest("内容不能为空")
+
+
+@login_required
+@ajax_required
+@require_http_methods(["POST"])
+def update_interactions(request):
+    """更新互动信息"""
+    data_point = request.POST['id_value']
+    news = News.objects.get(pk=data_point)
+    return JsonResponse({'likes': news.count_likers(), 'comments': news.comment_count()})
