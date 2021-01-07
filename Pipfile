@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 django-simpleui = "*"
 test-plus = "*"
+djangorestframework-jwt = "*"
+python-slugify = "*"
+django-taggit = "*"
 
 [dev-packages]
 

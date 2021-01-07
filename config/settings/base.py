@@ -1,5 +1,4 @@
 import environ
-from zanhu.utils import log_theme
 
 ROOT_DIR = environ.Path(__file__) - 3
 APPS_DIR = ROOT_DIR.path("zanhu")
@@ -58,13 +57,15 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     # "rest_framework.authtoken",
     "corsheaders",
-    'sorl.thumbnail',
+    "sorl.thumbnail",
+    "taggit",
 ]
 
 # 本地应用的APP
 LOCAL_APPS = [
     "users.apps.UsersConfig",
     "news.apps.NewsConfig",
+    "articles.apps.ArticlesConfig",
 ]
 
 # 将上面三个APP相加
