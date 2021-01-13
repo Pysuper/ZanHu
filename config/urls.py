@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
@@ -12,14 +11,18 @@ urlpatterns = [
                   # 站点管理
                   # path(settings.ADMIN_URL, admin.site.urls),
 
+                  # 配置首页
+                  path("", NewsListView.as_view(), name="home"),
+
                   # 用户管理
                   path("users/", include("users.urls", namespace="users")),
 
                   # 开发的应用
                   path("news/", include("news.urls", namespace="news")),
+                  path("articles/", include("articles.urls", namespace="articles")),
 
-                  # 配置首页
-                  path("", NewsListView.as_view(), name="home"),
+                  # 第三方应用
+                  path('markdownx/', include('markdownx.urls')),
 
                   path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
                   # path("users/", include("zanhu.users.urls", namespace="users")),

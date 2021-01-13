@@ -1,3 +1,9 @@
+# !/usr/bin/env python
+# -*- coding: UTF-8 -*-
+# Author   ：zheng xingtao
+
+
+from utils.log_theme import *
 import environ
 
 ROOT_DIR = environ.Path(__file__) - 3
@@ -41,6 +47,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'django.contrib.humanize',  # 友好的标签模板
+    'django.forms', # 用于后面重写django内置的widget模板
 ]
 
 # 第三方应用的APP
@@ -59,6 +66,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "sorl.thumbnail",
     "taggit",
+    "markdownx",
 ]
 
 # 本地应用的APP
@@ -70,6 +78,9 @@ LOCAL_APPS = [
 
 # 将上面三个APP相加
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+# 更改查找组件模板的顺序，先自定义的模板，然后是系统默认的模板
+FORM_RENDERER='django.forms.renderers.TemplatesSetting'
 
 MIGRATION_MODULES = {"sites": "zanhu.contrib.sites.migrations"}
 
@@ -246,3 +257,6 @@ STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 # }
 
 CORS_URLS_REGEX = r"^/api/.*$"
+
+MARKDOWNX_MEDIA_PATH = "markdownx/"  # markdownx文件保存的路径
+MARKDOWNX_SERVER_CALL_LATENCY = 1000  # 特殊情况特殊调节

@@ -7,10 +7,12 @@ import uuid
 
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
+# from django.utils.encoding import python_2_unicode_compatible
+
+
+# @python_2_unicode_compatible
 class News(models.Model):
     uuid_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL, related_name="publisher", verbose_name="用户")

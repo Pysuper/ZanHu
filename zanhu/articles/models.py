@@ -4,12 +4,14 @@
 
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
+# from django.utils.encoding import python_2_unicode_compatible
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
 from slugify import slugify
 from taggit.managers import TaggableManager
 
 
-@python_2_unicode_compatible
+# @python_2_unicode_compatible
 class ArticleQuerySet(models.query.QuerySet):
     """自定义QuerySet，提高模型类的可用性"""
 
@@ -24,7 +26,7 @@ class ArticleQuerySet(models.query.QuerySet):
     def get_counted_tags(self):
         """统计所有已发表的文章中，每一个标签的数量(大于0的)"""
         tag_dict = {}
-        query = self.get_published().annotate(tagged=models.Count('tags')).filter(tags__gt=0)
+        query = self.get_published().annotate(tagged=models.Count('tags')).filter(tags__gt=0)  # TODO: 聚合分组
         for obj in query:
             for tag in obj.tag.names():
                 if tag not in tag_dict:
@@ -34,7 +36,7 @@ class ArticleQuerySet(models.query.QuerySet):
         return tag_dict.items()
 
 
-@python_2_unicode_compatible
+# @python_2_unicode_compatible
 class Article(models.Model):
     """
     自动生成slug、tag管理 ==> python-slugify、django-taggit
@@ -46,12 +48,12 @@ class Article(models.Model):
     image = models.ImageField(upload_to="articles_pictures/%Y/%m/%d/", verbose_name="文章图片")
     slug = models.SlugField(max_length=255, verbose_name="(URL)别名")
     status = models.CharField(max_length=1, choices=STATUS, default="D", verbose_name="状态")
-    content = models.TextField(verbose_name="内容")
+    content = MarkdownxField(verbose_name="内容")
     edited = models.BooleanField(default=False, verbose_name="是否可编辑")
     tags = TaggableManager(help_text="多个标签使用,（英文）隔开", verbose_name="标签")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
-    objects = ArticleQuerySet.as_manager()  # TODO: 使用自定义的查询集
+    objects = ArticleQuerySet.as_manager()  # TODO: 关联自定义的查询集
 
     class Meta:
         ordering = ("created_at",)
@@ -63,3 +65,7 @@ class Article(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.slug = slugify(self.title)
         super(Article, self).save()
+
+    def get_markdown(self):
+        """将Markdown文本转换为HTML"""
+        return markdownify(self.content)
