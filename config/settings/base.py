@@ -67,6 +67,7 @@ THIRD_PARTY_APPS = [
     "sorl.thumbnail",
     "taggit",
     "markdownx",
+    "django_comments",
 ]
 
 # 本地应用的APP

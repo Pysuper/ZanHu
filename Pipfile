@@ -9,6 +9,8 @@ test-plus = "*"
 djangorestframework-jwt = "*"
 python-slugify = "*"
 django-taggit = "*"
+django-markdownx = "*"
+django-contrib-comments = "*"
 
 [dev-packages]
 

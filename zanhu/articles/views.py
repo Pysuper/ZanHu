@@ -8,10 +8,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView
 
 from zanhu.articles.forms import ArticleForm
 from zanhu.articles.models import Article
+from zanhu.utils.helper import AuthorRequiredMixin
 
 
 class ArticleListView(LoginRequiredMixin, ListView):
@@ -46,7 +47,9 @@ class ArticleCreateView(LoginRequiredMixin, CreateView):
     form_class = ArticleForm
     template_name = "articles/article_create.html"
     message = "您的文章已创建成功！"
-    initial = {"title": "OK!"}  # 在模板中自动填充的内容
+
+    # initial = {"title": "OK!"}  # 在模板中自动填充的内容
+
     # prefix = "zheng"  # 修改表单中的id名
 
     def form_valid(self, form):
@@ -65,3 +68,26 @@ class ArticleCreateView(LoginRequiredMixin, CreateView):
         在这里写动态填充的业务逻辑==>定期发表一些公告之类的功能
         '''
         return initial
+
+
+class ArticleDetailView(LoginRequiredMixin, DetailView):
+    """文章详情"""
+    model = Article
+    template_name = "articles/article_detail.html"
+
+
+class ArticleEditView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
+    """编辑文章"""
+    model = Article
+    message = "你的文章编辑成功！"
+    form_class = ArticleForm
+    template_name = "articles/article_update.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """创建成功后跳转的页面==>详情页"""
+        messages.success(self.request, self.message)  # 消息传递给下一次请求
+        return reverse_lazy("articles:article", kwargs={"slug": self.get_object().slug})
