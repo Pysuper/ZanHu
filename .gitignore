@@ -275,7 +275,7 @@ Temporary Items
 *.tmlanguage.cache
 *.tmPreferences.cache
 *.stTheme.cache
-
+.env
 # Workspace files are user-specific
 *.sublime-workspace
 
@@ -321,7 +321,7 @@ tags
 
 ### Project template
 
-zanhu/media/
+#zanhu/media/
 
 .pytest_cache/
 
