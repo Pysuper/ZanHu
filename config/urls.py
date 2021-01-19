@@ -20,6 +20,7 @@ urlpatterns = [
                   # 开发的应用
                   path("news/", include("news.urls", namespace="news")),
                   path("articles/", include("articles.urls", namespace="articles")),
+                  path("qa/", include("qa.urls", namespace="qa")),
 
                   # 第三方应用
                   path('markdownx/', include('markdownx.urls')),

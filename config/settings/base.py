@@ -75,6 +75,7 @@ LOCAL_APPS = [
     "users.apps.UsersConfig",
     "news.apps.NewsConfig",
     "articles.apps.ArticlesConfig",
+    "qa.apps.QaConfig",
 ]
 
 # 将上面三个APP相加
