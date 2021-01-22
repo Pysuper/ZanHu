@@ -53,7 +53,7 @@ class QuestionQuerySet(models.query.QuerySet):
         tag_dict = {}
         query = self.all().annotate(tagged=models.Count('tags')).filter(tags__gt=0)  # TODO: 聚合分组
         for obj in query:
-            for tag in obj.tag.names():
+            for tag in obj.tags.names():
                 if tag not in tag_dict:
                     tag_dict[tag] = 1
                 else:
@@ -98,7 +98,7 @@ class Question(models.Model):
     def total_votes(self):
         """得票数：赞-踩"""
         # TODO: 这里的写法！！！
-        dic = Counter(self.votes.objects.values_list('value', flat=True))  # 统计得票数
+        dic = Counter(self.votes.values_list('value', flat=True))  # 统计得票数
         return dic[True] - dic[False]
 
     def get_answers(self):
@@ -146,8 +146,12 @@ class Answer(models.Model):
     def total_votes(self):
         """得票数：赞-踩"""
         # TODO: 这里的写法！！！
-        dic = Counter(self.votes.objects.values_list('value', flat=True))  # 统计得票数
+        dic = Counter(self.votes.values_list('value', flat=True))  # 统计得票数
         return dic[True] - dic[False]
+
+    def get_upvoters(self):
+        """用列表生成式，获取赞同的用户、反对的用户"""
+        return [vote.user for vote in self.votes.filter(value=True)]
 
     def get_downvoters(self):
         """用列表生成式，获取赞同的用户、反对的用户"""
