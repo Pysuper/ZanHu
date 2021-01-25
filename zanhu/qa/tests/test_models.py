@@ -32,7 +32,7 @@ class QAModelsTest(TestCase):
         self.answer = Answer.objects.create(
             user=self.user,
             question=self.question_two,
-            content="问题2的正确答案",
+            content="问题2的正确回答",
             is_answer=True
         )
 
@@ -75,24 +75,16 @@ class QAModelsTest(TestCase):
         assert self.answer == self.question_two.get_answers()[0]
         assert self.question_two.count_answers() == 1
 
-    def test_question_accepted_answer(self):
-        """提问者接受回答"""
+    def test_question_accept_answer(self):
+        """
+        提问者接受回答
+        # TODO: Duplicate entry 'f5cce0ea35f747ff83014f0ef79017da' for key 'qa_answer.PRIMARY'
+        Answer的 id 值的设置
+        """
         # 给第一个问题提交三个回答
-        answer_one = Answer.objects.create(
-            user=self.user,
-            question=self.question_one,
-            content="回答1"
-        )
-        answer_two = Answer.objects.create(
-            user=self.user,
-            question=self.question_one,
-            content="回答2"
-        )
-        answer_three = Answer.objects.create(
-            user=self.user,
-            question=self.question_one,
-            content="回答3"
-        )
+        answer_one = Answer.objects.create(user=self.user, question=self.question_one, content="回答1")
+        answer_two = Answer.objects.create(user=self.user, question=self.question_one, content="回答2")
+        answer_three = Answer.objects.create(user=self.user, question=self.question_one, content="回答3")
 
         # 这时候没有被采纳的答案
         self.assertFalse(answer_one.is_answer)
@@ -112,4 +104,4 @@ class QAModelsTest(TestCase):
 
     def test_answer_str_(self):
         assert isinstance(self.answer, Answer)
-        assert str(self.answer) == "问题2的正确答案"
+        assert str(self.answer) == "问题2的正确回答"

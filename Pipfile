@@ -11,6 +11,7 @@ python-slugify = "*"
 django-taggit = "*"
 django-markdownx = "*"
 django-contrib-comments = "*"
+django = "==2.1.7"
 
 [dev-packages]
 

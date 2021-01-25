@@ -26,8 +26,9 @@ class ArticleQuerySet(models.query.QuerySet):
     def get_counted_tags(self):
         """统计所有已发表的文章中，每一个标签的数量(大于0的)"""
         tag_dict = {}
-        query = self.get_published().annotate(tagged=models.Count('tags')).filter(tags__gt=0)  # TODO: 聚合分组
-        for obj in query:
+        # query = self.get_published().annotate(tagged=models.Count('tags')).filter(tags__gt=0)  # TODO: 聚合分组
+        # for obj in query:
+        for obj in self.all():
             for tag in obj.tag.names():
                 if tag not in tag_dict:
                     tag_dict[tag] = 1

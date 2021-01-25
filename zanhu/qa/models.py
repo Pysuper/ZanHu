@@ -51,8 +51,9 @@ class QuestionQuerySet(models.query.QuerySet):
     def get_counted_tags(self):
         """统计所有已发表的问题中，每一个标签的数量(大于0的)"""
         tag_dict = {}
-        query = self.all().annotate(tagged=models.Count('tags')).filter(tags__gt=0)  # TODO: 聚合分组
-        for obj in query:
+        # query = self.all().annotate(tagged=models.Count('tags')).filter(tags__gt=0)  # TODO: 聚合分组
+        # for obj in query:
+        for obj in self.all():
             for tag in obj.tags.names():
                 if tag not in tag_dict:
                     tag_dict[tag] = 1
@@ -123,7 +124,8 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    uuid_id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    # TODO: 这里的uuid4，使用的引用，不是调用
+    uuid_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="a_author", on_delete=models.CASCADE, verbose_name="回答者")
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name="问题")
     content = MarkdownxField(verbose_name="内容")
