@@ -12,6 +12,7 @@ django-taggit = "*"
 django-markdownx = "*"
 django-contrib-comments = "*"
 django = "==2.1.7"
+channels = "*"
 
 [dev-packages]
 

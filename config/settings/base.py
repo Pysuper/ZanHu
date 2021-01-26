@@ -68,6 +68,7 @@ THIRD_PARTY_APPS = [
     "taggit",
     "markdownx",
     "django_comments",
+    "channels",
 ]
 
 # 本地应用的APP
@@ -76,6 +77,8 @@ LOCAL_APPS = [
     "news.apps.NewsConfig",
     "articles.apps.ArticlesConfig",
     "qa.apps.QaConfig",
+    "messager.apps.MessagerConfig",
+
 ]
 
 # 将上面三个APP相加
@@ -262,3 +265,35 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 MARKDOWNX_MEDIA_PATH = "markdownx/"  # markdownx文件保存的路径
 MARKDOWNX_SERVER_CALL_LATENCY = 1000  # 特殊情况特殊调节
+
+
+# ASGI server setup
+ASGI_APPLICATION = 'config.routing.application'
+
+
+# Django Channels 的数据
+# 频道层的缓存
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            # channel layers缓存使用Redis 3
+            "hosts": [f'{env("REDIS_URL", default="redis://127.0.0.1:6379")}/3', ],
+        },
+    },
+}
+
+# HAYSTACK_CONNECTIONS = {
+#     'default': {
+#         # 使用的Elasticsearch搜索引擎
+#         'ENGINE': 'haystack.backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
+#         # Elasticsearch连接的地址
+#         'URL': 'http://127.0.0.1:9200/',
+#         # 默认的索引名
+#         'INDEX_NAME': 'zanhu',
+#     }
+# }
+#
+# HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20  # 分页
+# # 实时信号量处理器，模型类中数据增加、更新、删除时自动更新索引
+# HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
