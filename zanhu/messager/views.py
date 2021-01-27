@@ -1,3 +1,4 @@
+from appdirs import unicode
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
@@ -6,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 
@@ -41,8 +43,7 @@ class ConversationListView(MessagesListView):
         return context
 
     def get_queryset(self):
-        active_user = get_object_or_404(get_user_model(),
-                                        username=self.kwargs["username"])
+        active_user = get_object_or_404(get_user_model(), username=self.kwargs["username"])
         return Message.objects.get_conversation(self.request.user, active_user)
 
 
@@ -74,6 +75,7 @@ def send_message(request):
         # TODO：group_send(group: 所在组-接收者的username, message: 消息内容) ; 这里使用的是装饰器的写法
         # 同步的代码全部用同步，异步的代码全部用异步
         # from channels.db import database_sync_to_async  # 数据库操作的同步转异步
+        # ord() 字符串转ASCII
         async_to_sync(channel_layer.group_send)(recipient.username, payload)
 
         return render(request, 'messager/single_message.html', {'message': msg})

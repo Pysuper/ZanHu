@@ -29,7 +29,7 @@ class ArticleQuerySet(models.query.QuerySet):
         # query = self.get_published().annotate(tagged=models.Count('tags')).filter(tags__gt=0)  # TODO: 聚合分组
         # for obj in query:
         for obj in self.all():
-            for tag in obj.tag.names():
+            for tag in obj.tags.names():
                 if tag not in tag_dict:
                     tag_dict[tag] = 1
                 else:
