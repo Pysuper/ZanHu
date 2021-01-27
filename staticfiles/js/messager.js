@@ -22,11 +22,15 @@ $(function () {
         return false;
     });
 
+    // const：固定常量
+    // "https:" ? "wss" : "ws" ==> JS中的三元运算符
     // WebSocket连接，使用wss(https)或者ws(http)
     const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
     const ws_path = ws_scheme + "://" + window.location.host + "/ws/" + currentUser + "/";
     const ws = new ReconnectingWebSocket(ws_path);
+
     // 监听后端发送过来的消息
+    // event 监听事件
     ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
         if (data.sender === activeUser) {  // 发送者为当前选中的用户
@@ -37,19 +41,21 @@ $(function () {
 });
 
 /*
-// WebSocket构造函数，用于新建WebSocket实例
-var ws = new WebSocket('ws://ip:80', 'websocket');
+// 必须操作：重连 ==> reconnecting-websocket
 
-返回实例对象当前的状态
-ws.readyState
+// WebSocket构造函数，用于新建WebSocket实例
+var ws = new WebSocket('websocket地址', '请求类型');
+
+ws.readyState：返回实例对象当前的状态
 CONNNECTING: 值为0, 表示正在连接
 OPEN: 值为1, 表示连接成功, 可以通信了
 CLOSING: 值为2, 表示连接正在关闭
 CLOSED: 值为3, 表示连接已关闭, 或者打开连接失败
 
+// ws.readyState：实例对象的使用
 switch (ws.readyState) {
     case ws.CONNECTING:
-        // XOXO
+        //
         break;
     case ws.OPEN:
         //
@@ -70,7 +76,10 @@ ws.onopen = function () {
     ws.send('连接成功！')
 };
 
-// ws.onclose  用于指定连接关闭后的回调函数
+// ws.onclose 用于指定连接关闭后的回调函数
+ws.onclose = function () {
+    ws.send('连接关闭！')
+};
 
 // ws.onmessage  用于指定收到服务器数据后的回调函数
 ws.onmessage = function (event) {
@@ -81,10 +90,10 @@ ws.onmessage = function (event) {
     }
 };
 
-// ws.send()
+// ws.send() // 发送数据内容
 
 // ws.onerror  指定报错时的回调函数
 ws.onerror = function (event) {
-    //
+    // 报错处理
 };
 */
