@@ -1,4 +1,3 @@
-from appdirs import unicode
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
@@ -7,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView
 
@@ -75,8 +73,9 @@ def send_message(request):
         # TODO：group_send(group: 所在组-接收者的username, message: 消息内容) ; 这里使用的是装饰器的写法
         # 同步的代码全部用同步，异步的代码全部用异步
         # from channels.db import database_sync_to_async  # 数据库操作的同步转异步
-        # ord() 字符串转ASCII
-        async_to_sync(channel_layer.group_send)(recipient.username, payload)
+
+        # TODO：在这里发送私信的时候，报错，可能是因为Python版本的问题，有时间使用Python3.7在尝试一下
+        async_to_sync(channel_layer.group_send)(recipient_username, payload)
 
         return render(request, 'messager/single_message.html', {'message': msg})
 

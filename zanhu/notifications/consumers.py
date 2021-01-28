@@ -12,7 +12,8 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             # 未登录用户拒绝连接
             await self.close()
         else:
-            await self.channel_layer.grop_add("notification", self.channel_name)
+            # 这里监听的是所有的，指定了组名
+            await self.channel_layer.group_add("notifications", self.channel_name)
             await self.accept()
 
     async def receive(self, text_data=None, bytes_data=None):

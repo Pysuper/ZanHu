@@ -245,7 +245,7 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60  # 任务的软时间限制，超时后SoftTime
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)  # 是否允许用户注册
 ACCOUNT_AUTHENTICATION_METHOD = "username"  # 用户使用什么登录, email/user_email
 ACCOUNT_EMAIL_REQUIRED = True  # 是否要求用户输入邮箱信息
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # 是否验证邮件, none-不验证, mandatory-强制验证, optional-可选项
+ACCOUNT_EMAIL_VERIFICATION = "none"  # 是否验证邮件, none-不验证, mandatory-强制验证, optional-可选项
 ACCOUNT_ADAPTER = "zanhu.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "zanhu.users.adapters.SocialAccountAdapter"
 
@@ -277,8 +277,9 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            # channel layers缓存使用Redis 3
-            "hosts": [f'{env("REDIS_URL", default="redis://127.0.0.1:6379")}/3', ],
+            # channel layers缓存使用Redis 3: { "hosts": ["redis://:password@127.0.0.1:6379/
+            # "hosts": [f'{env("REDIS_URL", default="redis://:root@127.0.0.1:6379")}/3', ],
+            "hosts": ["redis://:root@0.0.0.0:6379/3", ],
         },
     },
 }

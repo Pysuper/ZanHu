@@ -5,14 +5,14 @@
 
 import uuid
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.conf import settings
 from django.db import models
 
+from notifications.views import notification_handler
 
-# from django.utils.encoding import python_2_unicode_compatible
 
-
-# @python_2_unicode_compatible
 class News(models.Model):
     uuid_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL, related_name="publisher", verbose_name="用户")
@@ -30,14 +30,31 @@ class News(models.Model):
     def __str__(self):
         return self.content
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        """重写模型类的save()方法，数据保存到数据库的时候，就发送通知给所有人"""
+        super(News, self).save()
+        if not self.reply:
+            channel_layer = get_channel_layer()
+            payload = {
+                "type": "receive",
+                "key": "additional_news",
+                "actor_name": self.user.username,
+            }
+
+            # TODO: 这里也是异步变同步的时候，出现问题，不知道是不是Python3版本的功能问题，后面子多看看！！！！
+            async_to_sync(channel_layer.group_send)('notifications', payload)
+
     def switch_like(self, user):
         """点赞/取消点赞, 这里的动作是由某一个用户去执行的"""
-        if user in self.liked.all():    # self.liked.all()==> 所有赞过的用户，self.liked==>多对多外键字段
+        if user in self.liked.all():  # self.liked.all()==> 所有赞过的用户，self.liked==>多对多外键字段
             # 如果用户已经赞过，则取消赞
             self.liked.remove(user)
         else:
             # 如果用户没有赞过，则添加赞
             self.liked.add(user)
+            # 通知楼主
+            notification_handler(user, self.user, "L", self, id_value=str(self.uuid_id), key="social_update")
+
 
     def get_parent(self):
         """返回自关联中的上级记录或者本身"""
@@ -60,6 +77,8 @@ class News(models.Model):
             reply=True,
             parent=parent
         )
+        # 通知楼主
+        notification_handler(user, parent.user, "R", parent, id_value=str(parent.uuid_id), key="social_update")
 
     def get_thread(self):
         """关联到当前记录的所有记录"""

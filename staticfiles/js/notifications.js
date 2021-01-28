@@ -16,6 +16,7 @@ $(function () {
 
     CheckNotifications();  // 页面加载时执行
 
+    // 获取点赞数评论数
     function update_social_activity(id_value) {
         const newsToUpdate = $('[news-id=' + id_value + ']');
         $.ajax({
@@ -30,9 +31,10 @@ $(function () {
         });
     }
 
+    // 点击通知按钮
     notice.click(function () {
         if ($('.popover').is(':visible')) {
-            notice.popover('hide');
+            notice.popover('hide'); // 隐藏通知栏
             CheckNotifications();
         } else {
             notice.popover('dispose');
@@ -47,7 +49,7 @@ $(function () {
                         placement: 'bottom',
                         content: data,
                     });
-                    notice.popover('show');
+                    notice.popover('show'); // 显示通知栏
                     notice.removeClass('btn-danger')
                 },
             });
@@ -55,7 +57,7 @@ $(function () {
         return false;  // 不是False
     });
 
-    // WebSocket连接，使用wss(https)或者ws(http)
+    // WebSocket连接，使用wss(https)或者ws(http)， 三元运算符
     const ws_scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
     const ws_path = ws_scheme + '://' + window.location.host + '/ws/notifications/';
     const ws = new ReconnectingWebSocket(ws_path);
@@ -74,7 +76,7 @@ $(function () {
                 if (currentUser !== data.actor_name) {
                     notice.addClass('btn-danger');
                 }
-                update_social_activity(data.id_value);
+                update_social_activity(data.id_value); // 用户B又通过WebSocket向服务器获取的数据
                 break;
 
             case "additional_news":

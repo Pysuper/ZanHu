@@ -16,6 +16,7 @@ class NotificationUnreadListView(LoginRequiredMixin, ListView):
     template_name = 'notifications/notification_list.html'
 
     def get_queryset(self, **kwargs):
+        """接受者的外键反向查询"""
         return self.request.user.notifications.unread()
 
 
@@ -39,7 +40,6 @@ def mark_as_read(request, slug):
     messages.add_message(request, messages.SUCCESS, f'通知{notification}标为已读')
     if redirect_url:
         return redirect(redirect_url)
-
     return redirect('notifications:unread')
 
 
@@ -60,12 +60,14 @@ def notification_handler(actor, recipient, verb, action_object, **kwargs):
     :param kwargs:          key, id_value等
     :return:                None
     """
-    if actor.username != recipient.username and recipient.username == action_object.user.username:
+    # if actor.username != recipient.username and recipient.username == action_object.user.username:
+    if recipient.username == action_object.user.username:
         # 只通知接收者，即recipient == 动作对象的作者
 
         key = kwargs.get('key', 'notification')
         id_value = kwargs.get('id_value', None)
-        # 记录通知内容
+
+        # 在数据库中保存通知内容
         Notification.objects.create(
             actor=actor,
             recipient=recipient,
@@ -81,4 +83,6 @@ def notification_handler(actor, recipient, verb, action_object, **kwargs):
             'actor_name': actor.username,
             'id_value': id_value
         }
+
+        # 异步变同步
         async_to_sync(channel_layer.group_send)('notifications', payload)
