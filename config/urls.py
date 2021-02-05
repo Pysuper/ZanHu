@@ -27,6 +27,7 @@ urlpatterns = [
                   # 第三方应用
                   path('markdownx/', include('markdownx.urls')),
                   path('comments/', include('django_comments.urls')),
+                  path('search/', include('haystack.urls')),
 
                   path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
                   # path("users/", include("zanhu.users.urls", namespace="users")),

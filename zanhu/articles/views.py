@@ -9,9 +9,15 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django_comments.signals import comment_was_posted
+
+# 用于缓存视图中的某一个方法
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from zanhu.articles.forms import ArticleForm
 from zanhu.articles.models import Article
+from zanhu.notifications.views import notification_handler
 from zanhu.utils.helper import AuthorRequiredMixin
 
 
@@ -91,3 +97,16 @@ class ArticleEditView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
         """创建成功后跳转的页面==>详情页"""
         messages.success(self.request, self.message)  # 消息传递给下一次请求
         return reverse_lazy("articles:article", kwargs={"slug": self.get_object().slug})
+
+
+def notify_comment(**kwargs):
+    """文章有评论时，通知作者"""
+    actor = kwargs["request"].user
+    obj = kwargs["comment"].content_object  # 获取通用外键
+
+    notification_handler(actor, obj.user, "C", obj)
+
+
+# receiver：信号的目标
+# 观察者模式：订阅【列表】 + 通知 （通知）
+comment_was_posted.connect(receiver=notify_comment)

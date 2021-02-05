@@ -42,10 +42,10 @@
         },
         "django-simpleui": {
             "hashes": [
-                "sha256:1f111be0ffab9132980762a5cc9d4d25fb4abc61c93cee406f6d5cf85d0b4a51"
+                "sha256:3064e13aefb0a04df70ab938b6731700cbf1d1a3fb4c3fca7bf976b9359bb0e3"
             ],
             "index": "pypi",
-            "version": "==2021.1.1"
+            "version": "==2021.2"
         },
         "django-taggit": {
             "hashes": [

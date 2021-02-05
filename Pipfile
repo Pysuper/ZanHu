@@ -12,8 +12,11 @@ django-taggit = "*"
 django-markdownx = "*"
 django-contrib-comments = "*"
 django = "==2.1.7"
-channels = "*"
 channels-redis = "*"
+channels = "==2.1.7"
+django-haystack = "*"
+elasticsearch = "==2.4.1"
+django-debug-toolbar = "*"
 
 [dev-packages]
 

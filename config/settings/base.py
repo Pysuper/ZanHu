@@ -46,7 +46,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'django.contrib.humanize',  # 友好的标签模板
+    # 'django.contrib.humanize',  # 友好的标签模板
     'django.forms',  # 用于后面重写django内置的widget模板
 ]
 
@@ -69,6 +69,7 @@ THIRD_PARTY_APPS = [
     "markdownx",
     "django_comments",
     "channels",
+    "haystack",
 ]
 
 # 本地应用的APP
@@ -79,6 +80,7 @@ LOCAL_APPS = [
     "qa.apps.QaConfig",
     "messager.apps.MessagerConfig",
     "notifications.apps.NotificationsConfig",
+    "search.apps.SearchConfig"
 
 ]
 
@@ -96,9 +98,14 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
+# 用户登录
 AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "news:list"
-LOGIN_URL = "account_login"
+LOGIN_URL = "news:list"
+# 用户登录的session缓存
+# SESSION_ENGINE = "django.contrib.sessions.backends.db"  # 默认使用的是保存到数据库
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"  # 使用cache
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"  # 使用redis数据库
 
 # 加密算法
 PASSWORD_HASHERS = [
@@ -129,6 +136,18 @@ MIDDLEWARE = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# 配置redis缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
+        },
+    }
+}
 
 # 静态文件配置
 STATIC_ROOT = str(ROOT_DIR("staticfiles"))
@@ -229,7 +248,7 @@ LOGGING = {
 }
 
 # Celery
-# INSTALLED_APPS += ['zanhu.taskapp.celery.CeleryAppConfig']
+# INSTALLED_APPS += ['zanhu.tas kapp.celery.CeleryAppConfig']
 if USE_TZ:
     CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
@@ -266,7 +285,8 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 MARKDOWNX_MEDIA_PATH = "markdownx/"  # markdownx文件保存的路径
 MARKDOWNX_SERVER_CALL_LATENCY = 1000  # 特殊情况特殊调节
-
+MARKDOWNX_UPLOAD_MAX_SIZE = 5 * 1024 * 1024 # Markdown最大上传的图片大小5M
+MARKDOWNX_IMAGE_MAX_SIZE = {'size':(1000, 1000), 'quality': 100}   # 设置Markdown的图片质量：1000 --> 图片不压缩
 # Django Channels 的数据
 
 # ASGI server setup
@@ -284,17 +304,24 @@ CHANNEL_LAYERS = {
     },
 }
 
-# HAYSTACK_CONNECTIONS = {
-#     'default': {
-#         # 使用的Elasticsearch搜索引擎
-#         'ENGINE': 'haystack.backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
-#         # Elasticsearch连接的地址
-#         'URL': 'http://127.0.0.1:9200/',
-#         # 默认的索引名
-#         'INDEX_NAME': 'zanhu',
-#     }
-# }
-#
-# HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20  # 分页
-# # 实时信号量处理器，模型类中数据增加、更新、删除时自动更新索引
-# HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 使用的Elasticsearch搜索引擎
+        'ENGINE': 'haystack.backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
+        # Elasticsearch连接的地址
+        'URL': 'http://127.0.0.1:9200/',
+        # 默认的索引名
+        'INDEX_NAME': 'zanhu',
+    }
+}
+
+# 对搜索的结果进行分页
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20
+
+# 实时信号量处理器，模型类中数据增加、更新、删除时自动更新索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
+
+
+

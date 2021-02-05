@@ -8,7 +8,7 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         """建立连接"""
-        if self.scope["user"].is_anonymous():
+        if self.scope["user"].is_anonymous:
             # 未登录用户拒绝连接
             await self.close()
         else:

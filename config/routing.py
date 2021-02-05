@@ -24,6 +24,11 @@ application = ProtocolTypeRouter({
                     # URL路由匹配
                     path('ws/notifications/', NotificationsConsumer),
                     path('ws/<str:username>/', MessagesConsumer),
+
+                    # TODO: 这里路由的顺序
+                    # Django和Consumers的路由是兼容的，也就是说，我们需要处理考虑这里路由请求的顺序
+                    # 如果把ws/<str:username>/ 放在上面，notifications就是一个字符串，就直接使用username的路由解析了
+                    # 这个情况，github都会存在的
                 ])
             )
         )

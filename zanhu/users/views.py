@@ -32,7 +32,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         # 我发送私信给多少不同的用户：
         send_num = user.sent_messages.all()
         for s in send_num:
-            tmp.add(s.recipient.useraname)
+            tmp.add(s.recipient.username)
         # 我接受的私信来自多少不同的用户：
         received_num = user.received_messages.all()
         for r in received_num:

@@ -14,6 +14,7 @@ from django.urls import reverse_lazy  # URL的反向解析：reverse-反向解�
 from django.views.decorators.http import require_http_methods  # 装饰http请求方法的函数
 from django.views.generic import CreateView, ListView, DetailView  # 通用类视图
 
+from zanhu.notifications.views import notification_handler
 from zanhu.qa.forms import QuestionForm
 from zanhu.qa.models import Question, Answer
 from zanhu.utils.helper import ajax_required  # 自定义的ajax校验
@@ -179,4 +180,8 @@ def accept_answer(request):
         raise PermissionDenied
 
     answer.accept_answer()
+
+    # 通知回答者
+    # answer: 动作的对象
+    notification_handler(request.user, answer.user, "W", answer)
     return JsonResponse({"status": "true"})
